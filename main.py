@@ -2,6 +2,7 @@ import pygame
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from pygame.locals import *
+import math
 
 # Initialize Pygame
 pygame.init()
@@ -33,12 +34,27 @@ camera_rot_y = 0
 # Initialize mouse state
 mouse_down = False
 
+# Initialize orbit visibility
+show_orbit = True
+
 
 # Function to draw a sphere
 def draw_sphere(radius, color):
     glColor3fv(color)
     quad = gluNewQuadric()
     gluSphere(quad, radius, 32, 32)
+
+
+# Function to draw the orbit path
+def draw_orbit():
+    glColor3f(1, 1, 1)  # White
+    glBegin(GL_LINE_LOOP)
+    for i in range(100):
+        angle = math.radians(float(i) / 100 * 360.0)
+        orbit_x = 3 * math.cos(angle)
+        orbit_z = 3 * math.sin(angle)
+        glVertex3f(orbit_x, 0, orbit_z)
+    glEnd()
 
 
 # Main loop
@@ -58,6 +74,9 @@ while True:
                 dx, dy = event.rel
                 camera_rot_x += dy * 0.1
                 camera_rot_y += dx * 0.1
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_o:
+                show_orbit = not show_orbit
 
     # Clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -69,6 +88,10 @@ while True:
 
     # Draw the Earth
     draw_sphere(earth_radius, earth_color)
+
+    # Draw the Moon's orbit path
+    if show_orbit:
+        draw_orbit()
 
     # Draw the Moon
     glPushMatrix()
