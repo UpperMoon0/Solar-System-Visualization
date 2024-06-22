@@ -33,7 +33,7 @@ show_orbit = True
 
 # Create Earth and Moon instances
 earth = CelestialBody(radius=1, color=(0, 0, 1))
-moon = CelestialBody(radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=3, orbit_speed=0.1)
+moon = CelestialBody(radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=30, orbit_speed=0.1)
 
 # Main loop
 while True:
