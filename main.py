@@ -2,7 +2,8 @@ import pygame
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from pygame.locals import *
-import pygame_gui
+
+from gui.gui_manager import GuiManager
 from model.celestial_body import CelestialBody
 
 # Initialize Pygame
@@ -11,6 +12,7 @@ display = (800, 600)
 window_surface = pygame.display.set_mode(display, DOUBLEBUF | OPENGL | RESIZABLE)
 pygame.display.set_caption("Solar System 3D Visualization")
 
+
 # Set the perspective of the OpenGL scene
 def set_perspective(width, height):
     glViewport(0, 0, width, height)
@@ -18,6 +20,7 @@ def set_perspective(width, height):
     glLoadIdentity()
     gluPerspective(45, (width / height), 0.1, 1000.0)
     glMatrixMode(GL_MODELVIEW)
+
 
 set_perspective(display[0], display[1])
 
@@ -43,29 +46,21 @@ pygame.mouse.set_visible(True)
 
 # Create Earth and Moon instances
 earth = CelestialBody(b_name="Earth", radius=1, color=(0, 0, 1))
-moon = CelestialBody(b_name="Moon", radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=30, orbit_speed=0.1, parent_body=earth)
+moon = CelestialBody(b_name="Moon", radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=30, orbit_speed=0.1,
+                     parent_body=earth)
 
 # Create Mars, Phobos, and Deimos instances
 mars = CelestialBody(b_name="Mars", radius=0.532, color=(1, 0, 0), orbit_radius=150, orbit_speed=0.05)
-phobos = CelestialBody(b_name="Phobos", radius=0.011, color=(0.5, 0.5, 0.5), orbit_radius=6, orbit_speed=0.2, parent_body=mars)
-deimos = CelestialBody(b_name="Deimos", radius=0.006, color=(0.5, 0.5, 0.5), orbit_radius=15, orbit_speed=0.1, parent_body=mars)
+phobos = CelestialBody(b_name="Phobos", radius=0.011, color=(0.5, 0.5, 0.5), orbit_radius=6, orbit_speed=0.2,
+                       parent_body=mars)
+deimos = CelestialBody(b_name="Deimos", radius=0.006, color=(0.5, 0.5, 0.5), orbit_radius=15, orbit_speed=0.1,
+                       parent_body=mars)
 
 # List of celestial bodies
 celestial_bodies = [earth, moon, mars, phobos, deimos]
 
-# Initialize Pygame GUI manager
-manager = pygame_gui.UIManager(display)
-
-# Create dropdown menu
-dropdown_menu = pygame_gui.elements.UIDropDownMenu(
-    options_list=[body.name for body in celestial_bodies],
-    starting_option='Select Body',
-    relative_rect=pygame.Rect((700, 10), (100, 30)),
-    manager=manager
-)
-
-# Dropdown menu state
-dropdown_open = False
+# Create GuiManager instance
+gui_manager = GuiManager(celestial_bodies, display)
 
 # Main loop
 clock = pygame.time.Clock()
@@ -80,7 +75,6 @@ while is_running:
             display = (event.w, event.h)
             window_surface = pygame.display.set_mode(display, DOUBLEBUF | OPENGL | RESIZABLE)
             set_perspective(display[0], display[1])
-            manager.set_window_resolution(display)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 mouse_down = True
@@ -96,11 +90,11 @@ while is_running:
             if event.key == pygame.K_o:
                 show_orbit = not show_orbit
             elif event.key == pygame.K_p:
-                dropdown_open = not dropdown_open
+                gui_manager.dropdown_menu.open = not gui_manager.dropdown_menu.open
         elif event.type == pygame.MOUSEWHEEL:
-            zoom_level += event.y  # Adjust zoom level based on wheel movement
+            zoom_level += event.y
 
-        manager.process_events(event)
+        gui_manager.dropdown_menu.handle_event(event)
 
     # Clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -110,45 +104,20 @@ while is_running:
     glTranslatef(0.0, 0.0, zoom_level)
     glRotatef(camera_rot_x, 1, 0, 0)
     glRotatef(camera_rot_y, 0, 1, 0)
+    if gui_manager.target_body:
+        glTranslatef(*[-x for x in gui_manager.target_body.position])
 
-    # Draw the Earth
-    earth.draw()
-
-    # Draw the Moon's orbit path
-    if show_orbit:
-        moon.draw_orbit()
-
-    # Draw the Moon
-    moon.update_position()
-    moon.draw()
-
-    # Draw Mars
-    mars.update_position()
-    mars.draw()
-
-    # Draw Phobos' orbit path
-    if show_orbit:
-        phobos.draw_orbit()
-
-    # Draw Phobos
-    phobos.update_position()
-    phobos.draw()
-
-    # Draw Deimos' orbit path
-    if show_orbit:
-        deimos.draw_orbit()
-
-    # Draw Deimos
-    deimos.update_position()
-    deimos.draw()
+    # Draw the celestial bodies
+    for body in celestial_bodies:
+        body.update_position()
+        body.draw()
+        if show_orbit:
+            body.draw_orbit()
 
     glPopMatrix()  # End of camera transformations
 
-    # Update Pygame GUI
-    manager.update(time_delta)
-
-    # Draw Pygame GUI
-    manager.draw_ui(window_surface)
+    # Draw the dropdown menu if open
+    gui_manager.draw()
 
     # Update the display
     pygame.display.flip()
