@@ -2,7 +2,6 @@ import pygame
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from pygame.locals import *
-
 from model.celestial_body import CelestialBody
 
 # Initialize Pygame
@@ -33,7 +32,12 @@ show_orbit = True
 
 # Create Earth and Moon instances
 earth = CelestialBody(radius=1, color=(0, 0, 1))
-moon = CelestialBody(radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=30, orbit_speed=0.1)
+moon = CelestialBody(radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=30, orbit_speed=0.1, parent_body=earth)
+
+# Create Mars, Phobos, and Deimos instances
+mars = CelestialBody(radius=0.532, color=(1, 0, 0), orbit_radius=150, orbit_speed=0.05)
+phobos = CelestialBody(radius=0.011, color=(0.5, 0.5, 0.5), orbit_radius=6, orbit_speed=0.2, parent_body=mars)
+deimos = CelestialBody(radius=0.006, color=(0.5, 0.5, 0.5), orbit_radius=15, orbit_speed=0.1, parent_body=mars)
 
 # Main loop
 while True:
@@ -75,16 +79,30 @@ while True:
         moon.draw_orbit()
 
     # Draw the Moon
-    glPushMatrix()
-    glRotatef(moon.angle, 0, 1, 0)
-    glTranslatef(moon.orbit_radius, 0, 0)
+    moon.update_position()
     moon.draw()
-    glPopMatrix()
+
+    # Draw Mars
+    mars.update_position()
+    mars.draw()
+
+    # Draw Phobos' orbit path
+    if show_orbit:
+        phobos.draw_orbit()
+
+    # Draw Phobos
+    phobos.update_position()
+    phobos.draw()
+
+    # Draw Deimos' orbit path
+    if show_orbit:
+        deimos.draw_orbit()
+
+    # Draw Deimos
+    deimos.update_position()
+    deimos.draw()
 
     glPopMatrix()  # End of camera transformations
-
-    # Update the Moon's position
-    moon.update_position()
 
     # Update the display
     pygame.display.flip()
