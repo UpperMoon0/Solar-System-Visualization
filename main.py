@@ -2,7 +2,8 @@ import pygame
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from pygame.locals import *
-import math
+
+from model.celestial_body import CelestialBody
 
 # Initialize Pygame
 pygame.init()
@@ -13,19 +14,12 @@ pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
 # Set the perspective of the OpenGL scene
 gluPerspective(45, (display[0] / display[1]), 0.1, 1000.0)
 
-# Initialize zoom level
-zoom_level = -10
-
 # Enable depth testing
 glEnable(GL_DEPTH_TEST)
 glDepthFunc(GL_LESS)
 
-# Define the properties of the Earth and the Moon
-earth_radius = 1
-moon_radius = earth_radius * 0.273
-earth_color = (0, 0, 1)
-moon_color = (0.5, 0.5, 0.5)
-moon_angle = 0
+# Initialize zoom level
+zoom_level = -10
 
 # Initialize camera rotation angles
 camera_rot_x = 0
@@ -37,25 +31,9 @@ mouse_down = False
 # Initialize orbit visibility
 show_orbit = True
 
-
-# Function to draw a sphere
-def draw_sphere(radius, color):
-    glColor3fv(color)
-    quad = gluNewQuadric()
-    gluSphere(quad, radius, 32, 32)
-
-
-# Function to draw the orbit path
-def draw_orbit():
-    glColor3f(1, 1, 1)
-    glBegin(GL_LINE_LOOP)
-    for i in range(100):
-        angle = math.radians(float(i) / 100 * 360.0)
-        orbit_x = 3 * math.cos(angle)
-        orbit_z = 3 * math.sin(angle)
-        glVertex3f(orbit_x, 0, orbit_z)
-    glEnd()
-
+# Create Earth and Moon instances
+earth = CelestialBody(radius=1, color=(0, 0, 1))
+moon = CelestialBody(radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=3, orbit_speed=0.1)
 
 # Main loop
 while True:
@@ -90,23 +68,23 @@ while True:
     glRotatef(camera_rot_y, 0, 1, 0)
 
     # Draw the Earth
-    draw_sphere(earth_radius, earth_color)
+    earth.draw()
 
     # Draw the Moon's orbit path
     if show_orbit:
-        draw_orbit()
+        moon.draw_orbit()
 
     # Draw the Moon
     glPushMatrix()
-    glRotatef(moon_angle, 0, 1, 0)
-    glTranslatef(3, 0, 0)
-    draw_sphere(moon_radius, moon_color)
+    glRotatef(moon.angle, 0, 1, 0)
+    glTranslatef(moon.orbit_radius, 0, 0)
+    moon.draw()
     glPopMatrix()
 
     glPopMatrix()  # End of camera transformations
 
     # Update the Moon's position
-    moon_angle += 0.1
+    moon.update_position()
 
     # Update the display
     pygame.display.flip()
