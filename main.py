@@ -18,7 +18,7 @@ def set_perspective(width, height):
     glViewport(0, 0, width, height)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(45, (width / height), 0.1, 1000.0)
+    gluPerspective(45, (width / height), 0.1, 1000000)
     glMatrixMode(GL_MODELVIEW)
 
 
@@ -29,7 +29,7 @@ glEnable(GL_DEPTH_TEST)
 glDepthFunc(GL_LESS)
 
 # Initialize zoom level
-zoom_level = -10
+zoom_level = -1000
 
 # Initialize camera rotation angles
 camera_rot_x = 0
@@ -44,20 +44,24 @@ show_orbit = True
 # Show the cursor
 pygame.mouse.set_visible(True)
 
-# Create Earth and Moon instances
-earth = CelestialBody(b_name="Earth", radius=1, color=(0, 0, 1))
-moon = CelestialBody(b_name="Moon", radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=30, orbit_speed=0.1,
-                     parent_body=earth)
+au = 23455.62  # Astronomical unit in earth radii
+
+sun = CelestialBody(b_name="Sun", radius=109, color=(1, 1, 0))
+
+# Create Mercury, Venus, Earth, and Moon instances
+mercury = CelestialBody(b_name="Mercury", radius=0.383, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.39, orbit_speed=0.1, parent_body=sun)
+venus = CelestialBody(b_name="Venus", radius=0.949, color=(1, 0.5, 0), orbit_radius=au * 0.72, orbit_speed=0.08, parent_body=sun)
+earth = CelestialBody(b_name="Earth", radius=1, color=(0, 0, 1), orbit_radius=au, orbit_speed=0.02, parent_body=sun)
+moon = CelestialBody(b_name="Moon", radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0025695, orbit_speed=0.1, parent_body=earth)
 
 # Create Mars, Phobos, and Deimos instances
-mars = CelestialBody(b_name="Mars", radius=0.532, color=(1, 0, 0), orbit_radius=150, orbit_speed=0.05)
-phobos = CelestialBody(b_name="Phobos", radius=0.011, color=(0.5, 0.5, 0.5), orbit_radius=6, orbit_speed=0.2,
-                       parent_body=mars)
-deimos = CelestialBody(b_name="Deimos", radius=0.006, color=(0.5, 0.5, 0.5), orbit_radius=15, orbit_speed=0.1,
-                       parent_body=mars)
+mars = CelestialBody(b_name="Mars", radius=0.532, color=(1, 0, 0), orbit_radius=au * 1.52, orbit_speed=0.05, parent_body=sun)
+phobos = CelestialBody(b_name="Phobos", radius=0.011, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0002, orbit_speed=0.2, parent_body=mars)
+deimos = CelestialBody(b_name="Deimos", radius=0.006, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0001, orbit_speed=0.1, parent_body=mars)
 
 # List of celestial bodies
-celestial_bodies = [earth, moon, mars, phobos, deimos]
+celestial_bodies = [sun, mercury, venus, earth, moon, mars, phobos, deimos]
+
 
 # Create GuiManager instance
 gui_manager = GuiManager(celestial_bodies, display)
