@@ -5,7 +5,8 @@ from model.orbit import Orbit
 
 
 class CelestialBody:
-    def __init__(self, radius, color, orbit_radius=0, orbit_speed=0, parent_body=None):
+    def __init__(self, b_name, radius, color, orbit_radius=0, orbit_speed=0, parent_body=None):
+        self.name = b_name
         self.radius = radius
         self.color = color
         self.position = (0, 0, 0)
