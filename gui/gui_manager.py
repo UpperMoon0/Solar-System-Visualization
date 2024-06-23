@@ -3,6 +3,13 @@ from OpenGL.GL import *
 from gui.dropdown_menu import DropdownMenu
 
 
+def switch_to_3d():
+    glMatrixMode(GL_PROJECTION)
+    glPopMatrix()
+    glMatrixMode(GL_MODELVIEW)
+    glPopMatrix()
+
+
 class GuiManager:
     def __init__(self, celestial_bodies, display):
         self.target_body = celestial_bodies[0]
@@ -17,12 +24,6 @@ class GuiManager:
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
-
-    def switch_to_3d(self):
-        glMatrixMode(GL_PROJECTION)
-        glPopMatrix()
-        glMatrixMode(GL_MODELVIEW)
-        glPopMatrix()
 
     def draw(self):
         if self.dropdown_menu.open:
@@ -42,4 +43,4 @@ class GuiManager:
             glEnd()
             glDisable(GL_TEXTURE_2D)
             glDeleteTextures([texture_id])
-            self.switch_to_3d()
+            switch_to_3d()

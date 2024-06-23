@@ -5,12 +5,21 @@ from OpenGL.GL import *
 from gui.button import Button
 
 
+def get_indent_level(celestial_body):
+    level = 0
+    while celestial_body.orbit.parent_body is not None:
+        level += 1
+        celestial_body = celestial_body.orbit.parent_body
+    return level
+
+
 class DropdownMenu:
     def __init__(self, celestial_bodies, gui_manager):
         self.celestial_bodies = celestial_bodies
         self.gui_manager = gui_manager
         self.open = False
-        self.buttons = [Button(body.name, (20, 20 + i * 30), (160, 30), body) for i, body in enumerate(celestial_bodies)]
+        self.buttons = [Button(body.name, (20, 20 + i * 30), (160, 30), body, get_indent_level(body)) for i, body
+                        in enumerate(celestial_bodies)]
         self.scroll_offset = 0
 
     def draw(self):
