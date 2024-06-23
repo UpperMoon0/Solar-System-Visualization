@@ -28,7 +28,6 @@ class Button:
             if event.button == 1:  # Left mouse button
                 x, y = mouse_pos
                 if self.position[0] <= x <= self.position[0] + self.size[0] and self.position[1] <= y <= self.position[1] + self.size[1]:
-                    print(self.text)
                     gui_manager.target_body = self.celestial_body
                     return True
         return False
