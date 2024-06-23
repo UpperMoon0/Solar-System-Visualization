@@ -18,7 +18,7 @@ def set_perspective(width, height):
     glViewport(0, 0, width, height)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(45, (width / height), 0.1, 1000000)
+    gluPerspective(45, (width / height), 0.1, 1000000000)
     glMatrixMode(GL_MODELVIEW)
 
 
@@ -48,9 +48,11 @@ au = 23455.62  # Astronomical unit in earth radii
 
 sun = CelestialBody(b_name="Sun", radius=109, color=(1, 1, 0))
 
-# Create Mercury, Venus, Earth, and Moon instances
+# Create Mercury, Venus instances
 mercury = CelestialBody(b_name="Mercury", radius=0.383, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.39, orbit_speed=0.1, parent_body=sun)
 venus = CelestialBody(b_name="Venus", radius=0.949, color=(1, 0.5, 0), orbit_radius=au * 0.72, orbit_speed=0.08, parent_body=sun)
+
+# Create Earth, Moon instances
 earth = CelestialBody(b_name="Earth", radius=1, color=(0, 0, 1), orbit_radius=au, orbit_speed=0.02, parent_body=sun)
 moon = CelestialBody(b_name="Moon", radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0025695, orbit_speed=0.1, parent_body=earth)
 
@@ -59,8 +61,14 @@ mars = CelestialBody(b_name="Mars", radius=0.532, color=(1, 0, 0), orbit_radius=
 phobos = CelestialBody(b_name="Phobos", radius=0.011, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0002, orbit_speed=0.2, parent_body=mars)
 deimos = CelestialBody(b_name="Deimos", radius=0.006, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0001, orbit_speed=0.1, parent_body=mars)
 
+# Create Jupiter, Saturn, Uranus, and Neptune instances
+jupiter = CelestialBody(b_name="Jupiter", radius=11.21, color=(1, 0.5, 0), orbit_radius=au * 5.2, orbit_speed=0.03, parent_body=sun)
+saturn = CelestialBody(b_name="Saturn", radius=9.45, color=(1, 1, 0.5), orbit_radius=au * 9.58, orbit_speed=0.02, parent_body=sun)
+uranus = CelestialBody(b_name="Uranus", radius=4.01, color=(0.5, 0.5, 1), orbit_radius=au * 19.22, orbit_speed=0.01, parent_body=sun)
+neptune = CelestialBody(b_name="Neptune", radius=3.88, color=(0, 0, 1), orbit_radius=au * 30.05, orbit_speed=0.006, parent_body=sun)
+
 # List of celestial bodies
-celestial_bodies = [sun, mercury, venus, earth, moon, mars, phobos, deimos]
+celestial_bodies = [sun, mercury, venus, earth, moon, mars, phobos, deimos, jupiter, saturn, uranus, neptune]
 
 
 # Create GuiManager instance
