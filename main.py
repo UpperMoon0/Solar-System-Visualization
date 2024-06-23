@@ -18,7 +18,7 @@ def set_perspective(width, height):
     glViewport(0, 0, width, height)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(45, (width / height), 0.1, 1000000000)
+    gluPerspective(45, (width / height), 0.1, 1000000)
     glMatrixMode(GL_MODELVIEW)
 
 
@@ -48,11 +48,9 @@ au = 23455.62  # Astronomical unit in earth radii
 
 sun = CelestialBody(b_name="Sun", radius=109, color=(1, 1, 0))
 
-# Create Mercury, Venus instances
+# Create Mercury, Venus, Earth, and Moon instances
 mercury = CelestialBody(b_name="Mercury", radius=0.383, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.39, orbit_speed=0.1, parent_body=sun)
 venus = CelestialBody(b_name="Venus", radius=0.949, color=(1, 0.5, 0), orbit_radius=au * 0.72, orbit_speed=0.08, parent_body=sun)
-
-# Create Earth, Moon instances
 earth = CelestialBody(b_name="Earth", radius=1, color=(0, 0, 1), orbit_radius=au, orbit_speed=0.02, parent_body=sun)
 moon = CelestialBody(b_name="Moon", radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0025695, orbit_speed=0.1, parent_body=earth)
 
@@ -61,14 +59,40 @@ mars = CelestialBody(b_name="Mars", radius=0.532, color=(1, 0, 0), orbit_radius=
 phobos = CelestialBody(b_name="Phobos", radius=0.011, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0002, orbit_speed=0.2, parent_body=mars)
 deimos = CelestialBody(b_name="Deimos", radius=0.006, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0001, orbit_speed=0.1, parent_body=mars)
 
-# Create Jupiter, Saturn, Uranus, and Neptune instances
+# Create Jupiter, Io, Europa, Ganymede, and Callisto instances
 jupiter = CelestialBody(b_name="Jupiter", radius=11.21, color=(1, 0.5, 0), orbit_radius=au * 5.2, orbit_speed=0.03, parent_body=sun)
+io = CelestialBody(b_name="Io", radius=0.286, color=(1, 0.8, 0.5), orbit_radius=au * 0.0028, orbit_speed=0.1, parent_body=jupiter)
+europa = CelestialBody(b_name="Europa", radius=0.245, color=(0.8, 0.8, 1), orbit_radius=au * 0.0045, orbit_speed=0.08, parent_body=jupiter)
+ganymede = CelestialBody(b_name="Ganymede", radius=0.413, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0071, orbit_speed=0.05, parent_body=jupiter)
+callisto = CelestialBody(b_name="Callisto", radius=0.378, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.012, orbit_speed=0.03, parent_body=jupiter)
+
+# Create Saturn, Titan, Rhea, Iapetus, and Dione instances
 saturn = CelestialBody(b_name="Saturn", radius=9.45, color=(1, 1, 0.5), orbit_radius=au * 9.58, orbit_speed=0.02, parent_body=sun)
+titan = CelestialBody(b_name="Titan", radius=0.404, color=(1, 0.8, 0.5), orbit_radius=au * 0.0082, orbit_speed=0.02, parent_body=saturn)
+rhea = CelestialBody(b_name="Rhea", radius=0.119, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0035, orbit_speed=0.05, parent_body=saturn)
+iapetus = CelestialBody(b_name="Iapetus", radius=0.115, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0082, orbit_speed=0.02, parent_body=saturn)
+dione = CelestialBody(b_name="Dione", radius=0.088, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0025, orbit_speed=0.08, parent_body=saturn)
+
+# Create Uranus, Titania, Oberon, Umbriel, and Ariel instances
 uranus = CelestialBody(b_name="Uranus", radius=4.01, color=(0.5, 0.5, 1), orbit_radius=au * 19.22, orbit_speed=0.01, parent_body=sun)
+titania = CelestialBody(b_name="Titania", radius=0.123, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0029, orbit_speed=0.05, parent_body=uranus)
+oberon = CelestialBody(b_name="Oberon", radius=0.119, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0039, orbit_speed=0.04, parent_body=uranus)
+umbriel = CelestialBody(b_name="Umbriel", radius=0.093, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0027, orbit_speed=0.06, parent_body=uranus)
+ariel = CelestialBody(b_name="Ariel", radius=0.091, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0019, orbit_speed=0.07, parent_body=uranus)
+
+# Create Neptune, Triton, and Proteus instances
 neptune = CelestialBody(b_name="Neptune", radius=3.88, color=(0, 0, 1), orbit_radius=au * 30.05, orbit_speed=0.006, parent_body=sun)
+triton = CelestialBody(b_name="Triton", radius=0.212, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0035, orbit_speed=0.05, parent_body=neptune)
+proteus = CelestialBody(b_name="Proteus", radius=0.042, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0012, orbit_speed=0.08, parent_body=neptune)
 
 # List of celestial bodies
-celestial_bodies = [sun, mercury, venus, earth, moon, mars, phobos, deimos, jupiter, saturn, uranus, neptune]
+celestial_bodies = [
+    sun, mercury, venus, earth, moon, mars, phobos, deimos,
+    jupiter, io, europa, ganymede, callisto,
+    saturn, titan, rhea, iapetus, dione,
+    uranus, titania, oberon, umbriel, ariel,
+    neptune, triton, proteus
+]
 
 
 # Create GuiManager instance
