@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-from model.orbit import Orbit
+from entity.orbit import Orbit
 
 
 class CelestialBody:
