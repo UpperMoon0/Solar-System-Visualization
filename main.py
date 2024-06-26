@@ -13,6 +13,7 @@ display = (800, 600)
 window_surface = pygame.display.set_mode(display, DOUBLEBUF | OPENGL | RESIZABLE)
 pygame.display.set_caption("Solar System 3D Visualization")
 
+
 # Set the perspective of the OpenGL scene
 def set_perspective(width, height):
     glViewport(0, 0, width, height)
@@ -20,6 +21,7 @@ def set_perspective(width, height):
     glLoadIdentity()
     gluPerspective(45, (width / height), 0.1, 1000000)
     glMatrixMode(GL_MODELVIEW)
+
 
 set_perspective(display[0], display[1])
 
@@ -55,10 +57,10 @@ sun = CelestialBody(p_name="Sun",
 # venus = CelestialBody(b_name="Venus", radius=1, color=(1, 0.5, 0), orbit_radius=15, orbit_speed=0.08, parent_body=sun)
 earth = CelestialBody(p_name="Earth",
                       radius=1,
-                      mass=100,
+                      mass=10,
                       color=(0, 0, 1),
                       initial_position=np.array([20, 0, 0]),
-                      initial_velocity=np.array([0, 0, -4.35424639e-05]),
+                      initial_velocity=np.array([0, 0, -4.16e-05]),
                       parent_body=sun)
 # moon = CelestialBody(b_name="Moon", radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=3, orbit_speed=0.1, parent_body=earth)
 
@@ -78,10 +80,11 @@ gui_manager = GuiManager(celestial_bodies, display)
 # Main loop
 clock = pygame.time.Clock()
 is_running = True
-speed_up = 50000
+last_orbit_prediction_update = pygame.time.get_ticks()
+speed_up = 100
 
 while is_running:
-    time_delta = clock.tick(60) / 1000.0 * speed_up
+    time_delta = 1 * speed_up
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             is_running = False
@@ -127,6 +130,15 @@ while is_running:
         other_masses = np.array([b.mass for b in other_bodies])
         other_positions = np.array([b.position for b in other_bodies])
         body.update(time_delta, other_masses, other_positions)
+        if show_orbit:
+            current_time = pygame.time.get_ticks()
+            if current_time > last_orbit_prediction_update + 50:
+                body.predict_orbit(future_time=100000 * speed_up,
+                                   time_step=time_delta * 100,
+                                   masses=other_masses,
+                                   positions=other_positions)
+                last_orbit_prediction_update = current_time
+            body.draw_predicted_orbit()
         body.draw()
         body.log()
 

@@ -63,7 +63,7 @@ def gravitational_force(m1, m2, r1, r2):
     return force_vector
 
 
-def calculate_acceleration(m1, r1, masses, positions):
+def acceleration(m1, r1, masses, positions):
     """
     Calculate the acceleration of a mass due to gravitational forces from multiple masses.
 
@@ -89,33 +89,42 @@ def calculate_acceleration(m1, r1, masses, positions):
     return acceleration_vector
 
 
-def update_position(position, velocity, acceleration, delta_time):
+def position(p_position, p_velocity, p_acceleration, delta_time):
     """
-    Update the position of an object using Velocity Verlet integration.
+    Calculate the position of an object using Runge-Kutta (RK4) integration.
 
     Parameters:
-    position (np.array): Current position vector of the object (shape: [3]).
-    velocity (np.array): Current velocity vector of the object (shape: [3]).
-    acceleration (np.array): Current acceleration vector of the object (shape: [3]).
+    p_position (np.array): Current position vector of the object (shape: [3]).
+    p_velocity (np.array): Current velocity vector of the object (shape: [3]).
+    p_acceleration (np.array): Current acceleration vector of the object (shape: [3]).
     delta_time (float): The time step for the update (s).
 
     Returns:
     np.array: New position vector of the object (shape: [3]).
     """
-    return position + velocity * delta_time + 0.5 * acceleration * delta_time ** 2
+    k1 = p_velocity
+    k2 = p_velocity + 0.5 * delta_time * p_acceleration
+    k3 = p_velocity + 0.5 * delta_time * p_acceleration
+    k4 = p_velocity + delta_time * p_acceleration
+
+    new_position = p_position + (delta_time / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
+    return new_position
 
 
-def update_velocity(velocity, acceleration, new_acceleration, delta_time):
+def velocity(p_velocity, p_acceleration, new_acceleration, delta_time):
     """
-    Update the velocity of an object using Velocity Verlet integration.
+    Calculate the velocity of an object using Runge-Kutta (RK4) integration.
 
     Parameters:
-    velocity (np.array): Current velocity vector of the object (shape: [3]).
-    acceleration (np.array): Current acceleration vector of the object (shape: [3]).
+    p_velocity (np.array): Current velocity vector of the object (shape: [3]).
+    p_acceleration (np.array): Current acceleration vector of the object (shape: [3]).
     new_acceleration (np.array): New acceleration vector of the object (shape: [3]).
     delta_time (float): The time step for the update (s).
 
     Returns:
     np.array: New velocity vector of the object (shape: [3]).
     """
-    return velocity + 0.5 * (acceleration + new_acceleration) * delta_time
+    k1 = p_acceleration
+    k2 = new_acceleration
+    new_velocity = p_velocity + (delta_time / 2) * (k1 + k2)
+    return new_velocity
