@@ -1,17 +1,17 @@
+import numpy as np
 import pygame
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from pygame.locals import *
 
 from gui.gui_manager import GuiManager
-from model.celestial_body import CelestialBody
+from entity.celestial_body import CelestialBody
 
 # Initialize Pygame
 pygame.init()
 display = (800, 600)
 window_surface = pygame.display.set_mode(display, DOUBLEBUF | OPENGL | RESIZABLE)
 pygame.display.set_caption("Solar System 3D Visualization")
-
 
 # Set the perspective of the OpenGL scene
 def set_perspective(width, height):
@@ -21,7 +21,6 @@ def set_perspective(width, height):
     gluPerspective(45, (width / height), 0.1, 1000000)
     glMatrixMode(GL_MODELVIEW)
 
-
 set_perspective(display[0], display[1])
 
 # Enable depth testing
@@ -29,7 +28,7 @@ glEnable(GL_DEPTH_TEST)
 glDepthFunc(GL_LESS)
 
 # Initialize zoom level
-zoom_level = -1000
+zoom_level = -20
 
 # Initialize camera rotation angles
 camera_rot_x = 0
@@ -46,54 +45,32 @@ pygame.mouse.set_visible(True)
 
 au = 23455.62  # Astronomical unit in earth radii
 
-sun = CelestialBody(b_name="Sun", radius=109, color=(1, 1, 0))
+sun = CelestialBody(p_name="Sun",
+                    radius=4,
+                    mass=10000,
+                    color=(1, 1, 0))
 
 # Create Mercury, Venus, Earth, and Moon instances
-mercury = CelestialBody(b_name="Mercury", radius=0.383, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.39, orbit_speed=0.1, parent_body=sun)
-venus = CelestialBody(b_name="Venus", radius=0.949, color=(1, 0.5, 0), orbit_radius=au * 0.72, orbit_speed=0.08, parent_body=sun)
-earth = CelestialBody(b_name="Earth", radius=1, color=(0, 0, 1), orbit_radius=au, orbit_speed=0.02, parent_body=sun)
-moon = CelestialBody(b_name="Moon", radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0025695, orbit_speed=0.1, parent_body=earth)
+# mercury = CelestialBody(b_name="Mercury", radius=0.35, color=(0.5, 0.5, 0.5), orbit_radius=10, orbit_speed=0.1, parent_body=sun)
+# venus = CelestialBody(b_name="Venus", radius=1, color=(1, 0.5, 0), orbit_radius=15, orbit_speed=0.08, parent_body=sun)
+earth = CelestialBody(p_name="Earth",
+                      radius=1,
+                      mass=100,
+                      color=(0, 0, 1),
+                      initial_position=np.array([20, 0, 0]),
+                      initial_velocity=np.array([0, 0, -4.35424639e-05]),
+                      parent_body=sun)
+# moon = CelestialBody(b_name="Moon", radius=0.273, color=(0.5, 0.5, 0.5), orbit_radius=3, orbit_speed=0.1, parent_body=earth)
 
 # Create Mars, Phobos, and Deimos instances
-mars = CelestialBody(b_name="Mars", radius=0.532, color=(1, 0, 0), orbit_radius=au * 1.52, orbit_speed=0.05, parent_body=sun)
-phobos = CelestialBody(b_name="Phobos", radius=0.011, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0002, orbit_speed=0.2, parent_body=mars)
-deimos = CelestialBody(b_name="Deimos", radius=0.006, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0001, orbit_speed=0.1, parent_body=mars)
-
-# Create Jupiter, Io, Europa, Ganymede, and Callisto instances
-jupiter = CelestialBody(b_name="Jupiter", radius=11.21, color=(1, 0.5, 0), orbit_radius=au * 5.2, orbit_speed=0.03, parent_body=sun)
-io = CelestialBody(b_name="Io", radius=0.286, color=(1, 0.8, 0.5), orbit_radius=au * 0.0028, orbit_speed=0.1, parent_body=jupiter)
-europa = CelestialBody(b_name="Europa", radius=0.245, color=(0.8, 0.8, 1), orbit_radius=au * 0.0045, orbit_speed=0.08, parent_body=jupiter)
-ganymede = CelestialBody(b_name="Ganymede", radius=0.413, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0071, orbit_speed=0.05, parent_body=jupiter)
-callisto = CelestialBody(b_name="Callisto", radius=0.378, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.012, orbit_speed=0.03, parent_body=jupiter)
-
-# Create Saturn, Titan, Rhea, Iapetus, and Dione instances
-saturn = CelestialBody(b_name="Saturn", radius=9.45, color=(1, 1, 0.5), orbit_radius=au * 9.58, orbit_speed=0.02, parent_body=sun)
-titan = CelestialBody(b_name="Titan", radius=0.404, color=(1, 0.8, 0.5), orbit_radius=au * 0.0082, orbit_speed=0.02, parent_body=saturn)
-rhea = CelestialBody(b_name="Rhea", radius=0.119, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0035, orbit_speed=0.05, parent_body=saturn)
-iapetus = CelestialBody(b_name="Iapetus", radius=0.115, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0082, orbit_speed=0.02, parent_body=saturn)
-dione = CelestialBody(b_name="Dione", radius=0.088, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0025, orbit_speed=0.08, parent_body=saturn)
-
-# Create Uranus, Titania, Oberon, Umbriel, and Ariel instances
-uranus = CelestialBody(b_name="Uranus", radius=4.01, color=(0.5, 0.5, 1), orbit_radius=au * 19.22, orbit_speed=0.01, parent_body=sun)
-titania = CelestialBody(b_name="Titania", radius=0.123, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0029, orbit_speed=0.05, parent_body=uranus)
-oberon = CelestialBody(b_name="Oberon", radius=0.119, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0039, orbit_speed=0.04, parent_body=uranus)
-umbriel = CelestialBody(b_name="Umbriel", radius=0.093, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0027, orbit_speed=0.06, parent_body=uranus)
-ariel = CelestialBody(b_name="Ariel", radius=0.091, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0019, orbit_speed=0.07, parent_body=uranus)
-
-# Create Neptune, Triton, and Proteus instances
-neptune = CelestialBody(b_name="Neptune", radius=3.88, color=(0, 0, 1), orbit_radius=au * 30.05, orbit_speed=0.006, parent_body=sun)
-triton = CelestialBody(b_name="Triton", radius=0.212, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0035, orbit_speed=0.05, parent_body=neptune)
-proteus = CelestialBody(b_name="Proteus", radius=0.042, color=(0.5, 0.5, 0.5), orbit_radius=au * 0.0012, orbit_speed=0.08, parent_body=neptune)
+# mars = CelestialBody(b_name="Mars", radius=0.532, color=(1, 0, 0), orbit_radius=35, orbit_speed=0.05, parent_body=sun)
+# phobos = CelestialBody(b_name="Phobos", radius=0.2, color=(0.5, 0.5, 0.5), orbit_radius=4, orbit_speed=0.2, parent_body=mars)
+# deimos = CelestialBody(b_name="Deimos", radius=0.15, color=(0.5, 0.5, 0.5), orbit_radius=6, orbit_speed=0.1, parent_body=mars)
 
 # List of celestial bodies
 celestial_bodies = [
-    sun, mercury, venus, earth, moon, mars, phobos, deimos,
-    jupiter, io, europa, ganymede, callisto,
-    saturn, titan, rhea, iapetus, dione,
-    uranus, titania, oberon, umbriel, ariel,
-    neptune, triton, proteus
+    sun, earth
 ]
-
 
 # Create GuiManager instance
 gui_manager = GuiManager(celestial_bodies, display)
@@ -101,9 +78,10 @@ gui_manager = GuiManager(celestial_bodies, display)
 # Main loop
 clock = pygame.time.Clock()
 is_running = True
+speed_up = 50000
 
 while is_running:
-    time_delta = clock.tick(60) / 1000.0
+    time_delta = clock.tick(60) / 1000.0 * speed_up
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             is_running = False
@@ -145,10 +123,12 @@ while is_running:
 
     # Draw the celestial bodies
     for body in celestial_bodies:
-        body.update_position()
+        other_bodies = [b for b in celestial_bodies if b != body]
+        other_masses = np.array([b.mass for b in other_bodies])
+        other_positions = np.array([b.position for b in other_bodies])
+        body.update(time_delta, other_masses, other_positions)
         body.draw()
-        if show_orbit:
-            body.draw_orbit()
+        body.log()
 
     glPopMatrix()  # End of camera transformations
 
